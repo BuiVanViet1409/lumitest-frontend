@@ -16,7 +16,7 @@ const ExecutionView = ({ executionId, onBack }) => {
     return () => clearInterval(interval)
   }, [executionId])
 
-  if (!execution) return <div style={{ textAlign: 'center' }}>Đang tải kết quả...</div>
+  if (!execution) return <div style={{ textAlign: 'center', marginTop: '5rem' }}>Đang tải kết quả kiểm thử...</div>
 
   return (
     <div>
@@ -39,9 +39,9 @@ const ExecutionView = ({ executionId, onBack }) => {
           <div key={res.id} className="glass-card" style={{ display: 'flex', gap: '2rem' }}>
             <div style={{ flex: 1 }}>
               <h4 style={{ margin: 0, color: '#38bdf8' }}>Bước {index + 1}: {res.action}</h4>
-              <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>Selector: <code>{res.selector}</code></p>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>Vị trí (Selector): <code>{res.selector}</code></p>
               <div className={`status-badge status-${res.status.toLowerCase()}`} style={{ display: 'inline-block' }}>
-                {res.status}
+                {res.status === 'PASS' ? 'THÀNH CÔNG' : 'THẤT BẠI'}
               </div>
               {res.errorMessage && (
                 <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '1rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '0.25rem' }}>
@@ -52,9 +52,9 @@ const ExecutionView = ({ executionId, onBack }) => {
             <div style={{ width: '400px' }}>
               <img 
                 src={`/api/screenshots/${executionId}/${res.screenshotPath}`} 
-                alt="Screenshot proof" 
+                alt="Bằng chứng ảnh chụp" 
                 className="screenshot-preview"
-                onError={(e) => e.target.src = 'https://via.placeholder.com/400x225?text=No+Screenshot'}
+                onError={(e) => e.target.src = 'https://via.placeholder.com/400x225?text=Khong+co+anh+chup'}
               />
             </div>
           </div>

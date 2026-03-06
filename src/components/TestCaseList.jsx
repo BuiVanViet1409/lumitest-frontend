@@ -15,13 +15,13 @@ const TestCaseList = ({ testCases, onRun, onViewExecution }) => {
             <p style={{ fontSize: '0.9rem', color: '#94a3b8', minHeight: '3rem' }}>{tc.description}</p>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
               <button className="btn-primary" style={{ flex: 1 }} onClick={() => onRun(tc.id)}>
-                Chạy Test
+                Chạy Test ngay
               </button>
               <button 
                 style={{ background: 'transparent', border: '1px solid #475569', color: 'white', borderRadius: '0.5rem', padding: '0 1rem' }}
                 onClick={() => onViewExecution(tc.id)}
               >
-                Lịch sử
+                Kết quả
               </button>
             </div>
           </div>

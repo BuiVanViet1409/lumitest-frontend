@@ -39,9 +39,7 @@ function App() {
         >
           LumiTest QA
         </h1>
-        <p style={{ color: "#94a3b8" }}>
-          Automated Testing Platform for Modern Teams
-        </p>
+        <p style={{ color: "#94a3b8" }}>Nền tảng Kiểm thử Tự động dành cho QA chuyên nghiệp</p>
       </header>
 
       {selectedExecution ? (
