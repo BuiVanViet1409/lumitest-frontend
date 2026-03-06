@@ -44,8 +44,8 @@ const ExecutionView = ({ executionId, onBack }) => {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        {execution.results.map((res, index) => (
-          <div key={res.id} className="glass-card" style={{ display: 'flex', gap: '2rem' }}>
+        {execution.stepResults && execution.stepResults.map((res, index) => (
+          <div key={index} className="glass-card" style={{ display: 'flex', gap: '2rem' }}>
             <div style={{ flex: 1 }}>
               <h4 style={{ margin: 0, color: '#38bdf8' }}>Bước {index + 1}: {res.action}</h4>
               <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>Vị trí (Selector): <code>{res.selector}</code></p>
@@ -59,12 +59,14 @@ const ExecutionView = ({ executionId, onBack }) => {
               )}
             </div>
             <div style={{ width: '400px' }}>
-              <img 
-                src={`/api/screenshots/${executionId}/${res.screenshotPath}`} 
-                alt="Bằng chứng ảnh chụp" 
-                className="screenshot-preview"
-                onError={(e) => e.target.src = 'https://via.placeholder.com/400x225?text=Khong+co+anh+chup'}
-              />
+              {res.screenshotPath && (
+                <img 
+                  src={`/api/screenshots/${executionId}/${res.screenshotPath}`} 
+                  alt="Bằng chứng ảnh chụp" 
+                  className="screenshot-preview"
+                  onError={(e) => e.target.src = 'https://via.placeholder.com/400x225?text=Khong+co+anh+chup'}
+                />
+              )}
             </div>
           </div>
         ))}
