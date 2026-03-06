@@ -25,16 +25,25 @@ const ExecutionView = ({ executionId, onBack }) => {
       </button>
       
       <div className="glass-card" style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>Báo cáo: {execution.testCaseName}</h2>
-          <span className={`status-badge status-${execution.status.toLowerCase()}`}>
-            {execution.status}
-          </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <button className="btn-secondary" onClick={onBack}>&larr; Quay lại</button>
+        <div className={`status-badge status-${execution.status.toLowerCase()}`}>
+          Trạng thái: {execution.status === 'PASSED' ? 'THÀNH CÔNG' : (execution.status === 'RUNNING' ? 'ĐANG CHẠY' : 'THẤT BẠI')}
         </div>
-        <p style={{ color: '#94a3b8' }}>Bắt đầu: {new Date(execution.startTime).toLocaleString()}</p>
+      </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {execution.videoPath && (
+        <div className="glass-card" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          <h3>Video Quá trình Thực thi</h3>
+          <video controls width="100%" style={{ borderRadius: '0.5rem', marginTop: '1rem', border: '1px solid #475569' }}>
+            <source src={`/api/video/${executionId}/${execution.videoPath}`} type="video/webm" />
+            Trình duyệt của bạn không hỗ trợ phát video.
+          </video>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {execution.results.map((res, index) => (
           <div key={res.id} className="glass-card" style={{ display: 'flex', gap: '2rem' }}>
             <div style={{ flex: 1 }}>

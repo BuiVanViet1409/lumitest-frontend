@@ -1,14 +1,43 @@
+```javascript
 import React from 'react'
 
 const TestCaseList = ({ testCases, onRun, onViewExecution }) => {
+  const handleRecord = async () => {
+    const url = prompt("Nhập URL website bạn muốn ghi hình:");
+    if (!url) return;
+    
+    alert("Trình duyệt sẽ mở ra. Bạn hãy thực hiện các thao tác (click, nhập liệu) rồi ĐÓNG TRÌNH DUYỆT để hoàn tất ghi hình.");
+    
+    try {
+      const response = await fetch(`/api/testcases/record?url=${encodeURIComponent(url)}`, { method: 'POST' });
+      const steps = await response.json();
+      
+      if (steps && steps.length > 0) {
+        const name = prompt("Ghi hình xong! Nhập tên cho Test Case này:", "Ghi hình tự động - " + new Date().toLocaleTimeString());
+        if (name) {
+          await fetch('/api/testcases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, applicationUrl: url, steps, description: "Được tạo tự động từ Recorder" })
+          });
+          window.location.reload();
+        }
+      } else {
+        alert("Không ghi nhận được bước nào. Vui lòng thử lại.");
+      }
+    } catch (e) {
+      alert("Lỗi khi ghi hình: " + e.message);
+    }
+  };
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Danh sách Test Cases</h2>
-        <button className="btn-primary">Tạo Test Case mới</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h2 style={{ margin: 0 }}>Danh sách Kịch bản</h2>
+        <button className="btn-primary" onClick={handleRecord}>+ Ghi hình Test mới (Recorder)</button>
       </div>
 
-      <div className="test-grid">
+      <div className="test-case-grid">
         {testCases.map(tc => (
           <div key={tc.id} className="glass-card">
             <h3>{tc.name}</h3>
