@@ -116,6 +116,9 @@ const RecorderView = ({ onBack }) => {
               <p className="text-slate-400 text-xs leading-relaxed">
                 Interact with the browser window that just opened. Every click and input will be captured here.
               </p>
+              <p className="text-emerald-400 text-xs mt-3 font-medium bg-emerald-500/10 p-2 rounded border border-emerald-500/20">
+                💡 Tip: Hold <strong>Alt + Click</strong> on any text element to create a <em>Verify Text</em> checkpoint!
+              </p>
             </div>
           )}
         </div>
