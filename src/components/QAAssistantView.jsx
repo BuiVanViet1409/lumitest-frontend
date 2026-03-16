@@ -78,6 +78,51 @@ const QAAssistantView = () => {
     }));
   };
 
+  const handleSaveTestCase = async (tc, tcIdx) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/qa/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          testCase: tc, 
+          ticketTitle: currentSession.result.ticketTitle 
+        })
+      });
+      if (res.ok) {
+        setSavedCaseIndices(prev => new Set([...prev, tcIdx]));
+      }
+    } catch (e) {
+      alert("Failed to save test case.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveAll = async () => {
+    if (!currentSession?.result?.testCases?.length) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/qa/save-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          testCases: currentSession.result.testCases, 
+          ticketTitle: currentSession.result.ticketTitle 
+        })
+      });
+      if (res.ok) {
+        const allIndices = currentSession.result.testCases.map((_, i) => i);
+        setSavedCaseIndices(new Set(allIndices));
+        alert("All scenarios imported successfully!");
+      }
+    } catch (e) {
+      alert("Failed to save all test cases.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const currentSession = history.find(s => s.id === selectedSessionId);
 
   return (
@@ -186,12 +231,21 @@ const QAAssistantView = () => {
                    <h3 className="text-2xl font-black text-white tracking-tight">{currentSession.result.ticketTitle}</h3>
                  </div>
               </div>
-              <button 
-                onClick={() => setSelectedSessionId(null)} 
-                className="flex items-center gap-2 px-5 py-2.5 bg-ent-surface border border-ent-border rounded-xl text-[10px] font-black uppercase text-ent-text-muted hover:text-white hover:bg-white/5 transition-all"
-              >
-                <Plus size={14} /> New Request
-              </button>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleSaveAll}
+                  disabled={loading || savedCaseIndices.size === currentSession.result.testCases.length}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-ent-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:shadow-lg hover:shadow-ent-primary/20 transition-all disabled:opacity-50"
+                >
+                  <Plus size={14} /> Import All Scenarios
+                </button>
+                <button 
+                  onClick={() => setSelectedSessionId(null)} 
+                  className="flex items-center gap-2 px-5 py-2.5 bg-ent-surface border border-ent-border rounded-xl text-[10px] font-black uppercase text-ent-text-muted hover:text-white hover:bg-white/5 transition-all"
+                >
+                  <Plus size={14} /> New Request
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
@@ -262,9 +316,19 @@ const QAAssistantView = () => {
                     <div className="mt-10 pt-8 border-t border-ent-border flex items-center justify-between">
                        <div className="flex gap-2">
                          <span className="text-[10px] text-ent-text-light bg-ent-bg px-3 py-1 rounded-lg border border-ent-border font-black uppercase tracking-widest">Business Level</span>
+                         {savedCaseIndices.has(idx) && (
+                           <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 font-black uppercase tracking-widest flex items-center gap-1.5 animate-in slide-in-from-left-2">
+                             <CheckCircle2 size={12} /> Imported
+                           </span>
+                         )}
                        </div>
-                       <button className="flex items-center gap-3 bg-ent-primary text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:shadow-2xl hover:shadow-ent-primary/30 transition-all hover:-translate-y-1 active:translate-y-0">
-                         <Plus size={16} /> Import to Suite
+                       <button 
+                         onClick={() => handleSaveTestCase(tc, idx)}
+                         disabled={loading || savedCaseIndices.has(idx)}
+                         className={`flex items-center gap-3 px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${savedCaseIndices.has(idx) ? 'bg-ent-surface text-ent-text-light cursor-not-allowed' : 'bg-ent-primary text-white hover:shadow-2xl hover:shadow-ent-primary/30 hover:-translate-y-1 active:translate-y-0'}`}
+                       >
+                         {savedCaseIndices.has(idx) ? <CheckCircle2 size={16} /> : <Plus size={16} />}
+                         {savedCaseIndices.has(idx) ? 'Imported to Suite' : 'Import to Suite'}
                        </button>
                     </div>
                   </div>
