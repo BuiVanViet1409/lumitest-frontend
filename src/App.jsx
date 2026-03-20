@@ -9,10 +9,13 @@ import ReleaseView from './components/ReleaseView';
 import QAAssistantView from './components/QAAssistantView';
 import GenerateTestCase from './components/GenerateTestCase';
 import EnvironmentSelector from './components/EnvironmentSelector';
-import { Plus, Search, Bell, Shield, Sparkles, User, Globe2, ChevronDown, Layout, Beaker, Package, FileText, Command, Cpu, Terminal, Activity, Zap, Leaf } from "lucide-react";
+import ConfigInspectorView from './components/ConfigInspectorView';
+import { Plus, Search, Bell, Shield, Sparkles, User, Globe2, ChevronDown, Layout, Beaker, Package, FileText, Command, Cpu, Terminal, Activity, Zap, Leaf, Database } from "lucide-react";
 import "./index.css";
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
-function App() {
+function AppContent() {
+  const { lang, toggleLanguage, t } = useLanguage();
   const [testCases, setTestCases] = useState([]);
   const [selectedExecution, setSelectedExecution] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -134,7 +137,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] font-sans flex text-[#F8FAFC] overflow-hidden antialiased">
+    <div className="min-h-screen bg-white font-sans flex text-slate-900 overflow-hidden antialiased">
       <Sidebar 
         folders={folders} 
         activeFolder={selectedFolder} 
@@ -146,80 +149,86 @@ function App() {
         }} 
       />
 
-      <div className="flex-1 flex flex-col min-w-0 bg-[#020617] overflow-hidden relative">
-        {/* Midnight Glow Backdrop */}
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-[#3B82F6]/5 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#818CF8]/3 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-
-        {/* High-Editorial Dark Header */}
-        <header className="h-24 px-16 flex items-center justify-between border-b border-white/5 bg-[#020617]/80 backdrop-blur-3xl z-[100] sticky top-0 shadow-2xl">
-          <div className="flex items-center gap-16">
-            <div className="flex items-center gap-5 group cursor-pointer">
-               <div className="w-12 h-12 bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8] rounded-[1.25rem] flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.3)] group-hover:rotate-[25deg] transition-all duration-700">
-                  <Cpu className="text-white" size={28} strokeWidth={2.5} />
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden relative">
+        {/* Subtle Backdrop Glows */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+        
+        {/* Refined Header */}
+        <header className="h-16 px-8 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-[100] sticky top-0 shadow-sm">
+          <div className="flex items-center gap-12">
+            <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('tests')}>
+               <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-300">
+                  <Terminal className="text-white" size={20} strokeWidth={2.5} />
                </div>
-               <div className="flex flex-col">
-                  <span className="text-2xl font-black text-white tracking-tighter uppercase leading-none italic">LUMITEST <span className="text-[#3B82F6] text-[10px] align-top font-black not-italic ml-1 tracking-[0.3em] px-2.5 py-1 border border-[#3B82F6]/30 rounded-full bg-[#3B82F6]/10">ONYX</span></span>
-                  <span className="text-[10px] font-black text-[#475569] mt-2 uppercase tracking-[0.4em]">Neural Intelligence Node</span>
+                <div className="flex flex-col">
+                  <span className="text-lg font-bold text-slate-900 tracking-tight uppercase leading-none">LUMITEST <span className="text-indigo-600 text-[9px] align-top font-bold ml-1 tracking-wider px-2 py-0.5 border border-indigo-200 rounded-md bg-indigo-50">PRO</span></span>
+                  <span className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('common.automationEngine')}</span>
                </div>
             </div>
             
-            <nav className="flex items-center gap-12 ml-4">
+            <nav className="flex items-center gap-8 ml-4">
               {[
-                { id: 'dashboard', label: 'Matrix', icon: Command },
-                { id: 'releases', label: 'Ecosystem', icon: Package },
-                { id: 'tests', label: 'Library', icon: Beaker },
-                { id: 'generate', label: 'Synthesis', icon: Sparkles }
+                { id: 'dashboard', label: t('sidebar.settings'), icon: Activity },
+                { id: 'releases', label: t('sidebar.releases'), icon: Package },
+                { id: 'tests', label: t('sidebar.testCases'), icon: Beaker },
+                { id: 'generate', label: t('sidebar.generate'), icon: Sparkles },
+                { id: 'inspector', label: t('sidebar.dataDiscovery'), icon: Database }
               ].map(tab => (
                 <button 
                    key={tab.id}
                    onClick={() => setActiveTab(tab.id)}
-                   className={`relative py-8 text-[12px] font-black transition-all flex items-center gap-3 uppercase tracking-[0.3em] ${activeTab === tab.id ? 'text-white' : 'text-[#64748B] hover:text-[#94A39B]'}`}
+                   className={`relative py-5 text-[11px] font-bold transition-all flex items-center gap-2.5 uppercase tracking-wider ${activeTab === tab.id ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
                 >
-                  <tab.icon size={18} strokeWidth={activeTab === tab.id ? 3 : 2} className={activeTab === tab.id ? 'text-[#3B82F6]' : ''} />
+                  <tab.icon size={16} strokeWidth={activeTab === tab.id ? 2.5 : 2} className={activeTab === tab.id ? 'text-indigo-600' : ''} />
                   {tab.label}
                   {activeTab === tab.id && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#3B82F6] rounded-t-full shadow-[0_0_15px_rgba(59,130,246,0.8)] indicator-elite" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t-full shadow-[0_0_10px_rgba(79,70,229,0.2)]" />
                   )}
                 </button>
               ))}
             </nav>
           </div>
           
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all text-[10px] font-bold uppercase tracking-widest text-slate-600 shadow-sm"
+            >
+              <Globe2 size={14} className="text-indigo-500" />
+              {lang === 'en' ? 'EN' : 'VI'}
+            </button>
+
             <EnvironmentSelector selected={selectedEnv} onSelect={setSelectedEnv} />
             
-            <div className="w-px h-10 bg-white/5 mx-2" />
+            <div className="w-px h-8 bg-slate-200 mx-1" />
             
-            <div className="flex items-center gap-5 cursor-pointer group px-2">
+            <div className="flex items-center gap-4 cursor-pointer group px-1">
                <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-black text-[#475569] uppercase tracking-[0.5em] leading-none mb-1.5">Authorized</span>
-                  <span className="text-sm font-black text-white tracking-tight italic uppercase">Onyx Admin</span>
+                  <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">{t('common.authenticated')}</span>
+                  <span className="text-xs font-bold text-slate-900 tracking-tight uppercase">{t('common.admin')}</span>
                </div>
-                <div className="w-12 h-12 rounded-[1.25rem] border-2 border-white/10 overflow-hidden group-hover:border-[#3B82F6]/50 transition-all duration-700 shadow-2xl p-0.5 bg-slate-900 shadow-blue-500/5">
-                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Onyx" className="w-full h-full object-cover rounded-[1rem]" alt="User" />
+                <div className="w-10 h-10 rounded-xl border border-slate-200 overflow-hidden group-hover:border-indigo-600/40 transition-all duration-300 shadow-sm p-0.5 bg-white">
+                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=UX" className="w-full h-full object-cover rounded-lg" alt="User" />
                </div>
             </div>
           </div>
         </header>
 
-        {/* Obsidian Content Canvas */}
-        <main className="flex-1 overflow-hidden relative bg-transparent px-16 pb-16 pt-10">
+        {/* Global Content Canvas */}
+        <main className="flex-1 overflow-hidden relative bg-transparent px-8 pb-8 pt-6">
            <div className="h-full flex flex-col relative animate-premium-in">
-              {/* Ultra-Dark Glass Container */}
-              <div className="flex-1 bg-[#0B0E14]/40 backdrop-blur-3xl border border-white/5 rounded-[3.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.6)] overflow-hidden relative z-10 flex flex-col">
+              <div className="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden relative z-10 flex flex-col">
                  <div className="flex-1 overflow-hidden relative flex flex-col">
                     {activeTab === 'dashboard' && (
-                      <div className="flex-1 flex flex-col items-center justify-center p-24 text-center space-y-12 animate-premium-in">
-                         <div className="w-40 h-40 bg-[#020617] rounded-[3.5rem] flex items-center justify-center shadow-2xl border border-white/5 relative group overflow-hidden">
-                             <Activity size={80} className="text-[#3B82F6]/20 group-hover:scale-110 group-hover:text-[#3B82F6] transition-all duration-1000" />
-                             <div className="absolute inset-0 bg-[#3B82F6] blur-3xl opacity-0 group-hover:opacity-10 transition-opacity" />
+                      <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-8 animate-premium-in">
+                         <div className="w-24 h-24 bg-slate-50 rounded-2xl flex items-center justify-center shadow-md border border-slate-100 relative group overflow-hidden">
+                             <Activity size={40} className="text-slate-300 group-hover:scale-110 group-hover:text-indigo-600 transition-all duration-500" />
                           </div>
-                         <div className="space-y-6 max-w-xl">
-                            <h2 className="text-5xl font-black text-white tracking-tighter uppercase leading-none mb-2">Neural Matrix <br/> Monitoring</h2>
-                            <p className="text-lg font-bold text-[#64748B] leading-relaxed uppercase tracking-widest opacity-80">The structural integrity of your SIT clusters is being analyzed. Real-time telemetry will stream here.</p>
+                         <div className="space-y-4 max-w-md">
+                            <h2 className="text-3xl font-bold text-slate-900 tracking-tight uppercase leading-none mb-1">{t('dashboard.telemetryTitle')}</h2>
+                            <p className="text-sm font-bold text-slate-400 leading-relaxed uppercase tracking-widest">{t('dashboard.telemetryDesc')}</p>
                          </div>
-                          <button className="px-12 py-5 bg-[#3B82F6] text-white rounded-[2rem] font-black shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:translate-y-[-4px] active:scale-95 transition-all tracking-[0.2em] uppercase text-sm">Synchronize Grid</button>
+                          <button className="px-10 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg hover:bg-indigo-700 active:scale-95 transition-all tracking-wider uppercase text-xs">{t('dashboard.syncGrid')}</button>
                       </div>
                     )}
 
@@ -234,6 +243,7 @@ function App() {
                     {activeTab === 'releases' && <ReleaseView />}
                     {activeTab === 'ai-assistant' && <QAAssistantView />}
                     {activeTab === 'generate' && <GenerateTestCase />}
+                    {activeTab === 'inspector' && <ConfigInspectorView />}
                     
                     {activeTab === 'recorder' && (
                       <RecorderView 
@@ -251,9 +261,9 @@ function App() {
                  </div>
               </div>
 
-              {/* Obsidian Inspector Panel Overlay */}
+              {/* Inspector Panel Overlay */}
               {selectedTestCase && (
-                <div className="absolute inset-y-0 right-0 w-[650px] z-[200] overflow-hidden rounded-l-[4rem] flex shadow-[-80px_0_150px_rgba(0,0,0,0.8)] border-l border-white/5">
+                <div className="absolute inset-y-0 right-0 w-[600px] z-[200] overflow-hidden rounded-l-2xl flex shadow-2xl border-l border-slate-200 bg-white">
                    <TestCaseDetail 
                      testCase={selectedTestCase} 
                      onClose={() => setSelectedTestCase(null)}
@@ -285,4 +295,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+}
